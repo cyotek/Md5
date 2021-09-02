@@ -1,7 +1,7 @@
 ﻿// Cyotek MD5 Utility
 // https://github.com/cyotek/Md5
 
-// Copyright (c) 2015-2021 Cyotek Ltd.
+// Copyright (c) 2021 Cyotek Ltd.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text

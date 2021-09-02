@@ -5,7 +5,8 @@ Ultra simple MD5 command line utility.
 
 Usage:
 
-`md5.exe [file1[+file2][+file3]...] [/r] [/w] [/v]`
+`md5.exe [file1[+file2][+file3]...] [/r] [[/w [path]] | [/v
+[path]]]`
 
 File name arguments may point to either a file or a directory.
 When pointing to a directory, all files in the directory will be
@@ -26,9 +27,14 @@ Options
 * `/r` - specifies that directories should be scanned
   recursively
 * `/w` - specifies that a `.md5` file containing the hash should
-  be written for each scanned file
+  be written for each scanned file. If `path` is set, the `.md5`
+  file will be written to the specified location
 * `/v` - specifies that the contents of each file will be
-  verified against a previous saved file in a `.md5` file
+  verified against a previous saved file in a `.md5` file. If
+  `path` is set, the program will search for the `.md5` file in
+  the specified location
+
+> The `/v` and `/w` options cannot be both set.
 
 Exit Codes
 ----------
@@ -47,8 +53,8 @@ directory][screenshot1]
 
 Displaying the hash of all `.exe` files in the current directory
 
-![Displaying the hash of all .exe files in the current
-directory and child folders][screenshot2]
+![Displaying the hash of all .exe files in the current directory
+and child folders][screenshot2]
 
 Displaying the hash of all `.exe` files in the current directory
 and child folders
@@ -60,3 +66,4 @@ Verifying hashes against previous saved values
 [screenshot1]: res/screenshot1.png
 [screenshot2]: res/screenshot2.png
 [screenshot3]: res/screenshot3.png
+

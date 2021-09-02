@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="ColorEcho.cs" />
     <Compile Include="ExitCode.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WildcardPatternMatcher.cs" />
