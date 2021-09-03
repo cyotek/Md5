@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Cyotek.Tools.SimpleMD5
@@ -98,15 +97,12 @@ namespace Cyotek.Tools.SimpleMD5
         : this.TruncatePath(basePath, fileName);
     }
 
-
     private string GetMd5FileName(string fileName)
     {
       return string.IsNullOrEmpty(_options.HashPath)
         ? fileName + ".md5"
         : Path.Combine(_options.HashPath, fileName.Substring(_basePath.Length)) + ".md5";
     }
-
-   
 
     private bool IsDirectory(string path)
     {
@@ -182,12 +178,15 @@ namespace Cyotek.Tools.SimpleMD5
       exitCode = ExitCode.Success;
       hashString = HashUtilities.GetHashString(hash);
 
-      ColorEcho.EchoLine("{0b}" + hashString + "{#}: " + this.GetFileNameLabel(basePath, fileName));
+      if (!_options.ErrorsOnly)
+      {
+        ColorEcho.EchoLine("{0b}" + hashString + "{#}: " + this.GetFileNameLabel(basePath, fileName));
+      }
 
       if (!this.IsMd5File(fileName))
       {
         this.UpdateHash(fileName, hashString);
-        exitCode = this.VerifyHash(fileName, hashString);
+        exitCode = this.VerifyHash(basePath, fileName, hashString);
       }
 
       return exitCode;
@@ -324,7 +323,7 @@ namespace Cyotek.Tools.SimpleMD5
       return result;
     }
 
-    private ExitCode VerifyHash(string fileName, string hash)
+    private ExitCode VerifyHash(string basePath, string fileName, string hash)
     {
       ExitCode result;
       string md5FileName;
@@ -338,17 +337,17 @@ namespace Cyotek.Tools.SimpleMD5
         {
           if (!string.Equals(hash, File.ReadAllText(md5FileName)))
           {
-            ColorEcho.EchoLine("{0c}VERIFY FAILED:{#} Hash mismatch");
+            ColorEcho.EchoLine("{0c}VERIFY FAILED:{#} " + this.GetFileNameLabel(basePath, fileName) + " (Hash mismatch)");
             result = ExitCode.VerifyFailed;
           }
-          else
+          else if (!_options.ErrorsOnly)
           {
             ColorEcho.EchoLine("{0a}VERIFIED");
           }
         }
         else
         {
-          ColorEcho.EchoLine("{0c}VERIFY FAILED:{#} Missing hash");
+          ColorEcho.EchoLine("{0c}VERIFY FAILED:{#} " + this.GetFileNameLabel(basePath, fileName) + " (Missing hash)");
           result = ExitCode.VerifyFailed;
         }
       }

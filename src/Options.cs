@@ -20,8 +20,11 @@ namespace Cyotek.Tools.SimpleMD5
   {
     #region Private Fields
 
-    private readonly List<string> _files;
     private readonly List<string> _errors;
+
+    private readonly bool _errorsOnly;
+
+    private readonly List<string> _files;
 
     private readonly bool _fullPaths;
 
@@ -54,7 +57,7 @@ namespace Cyotek.Tools.SimpleMD5
 
         if (!string.IsNullOrEmpty(arg))
         {
-          if (this.IsSwitch(arg, out string name))
+          if (Options.IsSwitch(arg, out string name))
           {
             if (string.Equals(name, "r", StringComparison.OrdinalIgnoreCase))
             {
@@ -68,6 +71,10 @@ namespace Cyotek.Tools.SimpleMD5
             else if (string.Equals(name, "f", StringComparison.OrdinalIgnoreCase))
             {
               _fullPaths = true;
+            }
+            else if (string.Equals(name, "e", StringComparison.OrdinalIgnoreCase))
+            {
+              _errorsOnly = true;
             }
             else if (string.Equals(name, "w", StringComparison.OrdinalIgnoreCase))
             {
@@ -97,8 +104,11 @@ namespace Cyotek.Tools.SimpleMD5
 
     #region Public Properties
 
-    public ReadOnlyCollection<string> Files => _files.AsReadOnly();
     public ReadOnlyCollection<string> Errors => _errors.AsReadOnly();
+
+    public bool ErrorsOnly => _errorsOnly;
+
+    public ReadOnlyCollection<string> Files => _files.AsReadOnly();
 
     public bool FullPaths => _fullPaths;
 
@@ -114,7 +124,7 @@ namespace Cyotek.Tools.SimpleMD5
 
     #region Private Methods
 
-    private bool IsSwitch(string arg, out string name)
+    private static bool IsSwitch(string arg, out string name)
     {
       bool isSwitch;
 

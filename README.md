@@ -29,6 +29,7 @@ directory will be scanned.
 | `/w <path>` | Write the hash into `<filename>.md5`. If `path` is specified, file will be written to specified location instead of alongside source file. Cannot be used with `/v` |
 | `/v <path>` | Verify hashes. If `path` is specified, hash will be read from specified location. Cannot be used with `/w`                                                          |
 | `/f`        | Show full paths                                                                                                                                                     |
+| `/e`        | Show errors only (only applicable with `/v`)                                                                                                                        |
 
 ## Exit Codes
 
