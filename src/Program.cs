@@ -126,20 +126,9 @@ namespace Cyotek.Tools.SimpleMD5
 
     private string GetMd5FileName(string fileName)
     {
-      string result;
-
-      if (string.IsNullOrEmpty(_options.HashPath))
-      {
-        result = fileName + ".md5";
-      }
-      else
-      {
-        result = Path.Combine(_options.HashPath, fileName.Substring(_basePath.Length)) + ".md5";
-
-        Directory.CreateDirectory(Path.GetDirectoryName(result));
-      }
-
-      return result;
+      return string.IsNullOrEmpty(_options.HashPath)
+        ? fileName + ".md5"
+        : Path.Combine(_options.HashPath, fileName.Substring(_basePath.Length)) + ".md5";
     }
 
     private byte[] GetMd5Hash(string fileName)
@@ -331,6 +320,8 @@ namespace Cyotek.Tools.SimpleMD5
 
       if (this.ShouldWriteFileHash(md5FileName, hash))
       {
+        Directory.CreateDirectory(Path.GetDirectoryName(md5FileName));
+
         File.WriteAllText(md5FileName, hash, Encoding.ASCII);
       }
     }
