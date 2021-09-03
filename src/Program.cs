@@ -98,31 +98,6 @@ namespace Cyotek.Tools.SimpleMD5
         : this.TruncatePath(basePath, fileName);
     }
 
-    private byte[] GetHash(HashAlgorithm algorithm, string fileName)
-    {
-      byte[] result;
-
-      using (Stream stream = File.OpenRead(fileName))
-      {
-        result = algorithm.ComputeHash(stream);
-      }
-
-      return result;
-    }
-
-    private string GetHashString(byte[] data)
-    {
-      StringBuilder sb;
-
-      sb = new StringBuilder(data.Length * 2);
-
-      foreach (byte value in data)
-      {
-        sb.Append(value.ToString("x2"));
-      }
-
-      return sb.ToString();
-    }
 
     private string GetMd5FileName(string fileName)
     {
@@ -131,13 +106,7 @@ namespace Cyotek.Tools.SimpleMD5
         : Path.Combine(_options.HashPath, fileName.Substring(_basePath.Length)) + ".md5";
     }
 
-    private byte[] GetMd5Hash(string fileName)
-    {
-      using (HashAlgorithm hash = MD5.Create())
-      {
-        return this.GetHash(hash, fileName);
-      }
-    }
+   
 
     private bool IsDirectory(string path)
     {
@@ -194,7 +163,7 @@ namespace Cyotek.Tools.SimpleMD5
 
       try
       {
-        result = this.ProcessFile(basePath, fileName, this.GetMd5Hash(fileName));
+        result = this.ProcessFile(basePath, fileName, HashUtilities.GetMd5Hash(fileName));
       }
       catch (Exception ex)
       {
@@ -211,7 +180,7 @@ namespace Cyotek.Tools.SimpleMD5
       string hashString;
 
       exitCode = ExitCode.Success;
-      hashString = this.GetHashString(hash);
+      hashString = HashUtilities.GetHashString(hash);
 
       ColorEcho.EchoLine("{0b}" + hashString + "{#}: " + this.GetFileNameLabel(basePath, fileName));
 
