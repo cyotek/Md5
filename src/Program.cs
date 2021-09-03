@@ -332,7 +332,14 @@ namespace Cyotek.Tools.SimpleMD5
 
       result = false;
 
-      if (_options.Generate && _options.Verify)
+      if (_options.Errors.Count > 0)
+      {
+        foreach (string error in _options.Errors)
+        {
+          ColorEcho.EchoLine("{0e}ERROR{#}: " + error);
+        }
+      }
+      else if (_options.Generate && _options.Verify)
       {
         ColorEcho.EchoLine("{0e}ERROR{#}: Cannot specify both /w and /v.");
       }

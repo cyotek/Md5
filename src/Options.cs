@@ -20,6 +20,7 @@ namespace Cyotek.Tools.SimpleMD5
     #region Private Fields
 
     private readonly List<string> _files;
+    private readonly List<string> _errors;
 
     private readonly string _hashPath;
 
@@ -38,6 +39,7 @@ namespace Cyotek.Tools.SimpleMD5
       bool pathSwitchActive;
 
       _files = new List<string>();
+      _errors = new List<string>();
       pathSwitchActive = false;
 
       for (int i = 0; i < args.Length; i++)
@@ -66,7 +68,7 @@ namespace Cyotek.Tools.SimpleMD5
             }
             else
             {
-              throw new ArgumentException(string.Format("Switch '{0}' not recognised.", name));
+              _errors.Add(string.Format("Switch '{0}' not recognised.", name));
             }
           }
           else if (pathSwitchActive)
@@ -88,6 +90,7 @@ namespace Cyotek.Tools.SimpleMD5
     #region Public Properties
 
     public ReadOnlyCollection<string> Files => _files.AsReadOnly();
+    public ReadOnlyCollection<string> Errors => _errors.AsReadOnly();
 
     public bool Generate => _writeHash;
 
