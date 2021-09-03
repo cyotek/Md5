@@ -91,6 +91,13 @@ namespace Cyotek.Tools.SimpleMD5
       return path;
     }
 
+    private string GetFileNameLabel(string fileName)
+    {
+      return _options.FullPaths
+        ? fileName
+        : Path.GetFileName(fileName);
+    }
+
     private byte[] GetHash(HashAlgorithm algorithm, string fileName)
     {
       byte[] result;
@@ -217,7 +224,7 @@ namespace Cyotek.Tools.SimpleMD5
       exitCode = ExitCode.Success;
       hashString = this.GetHashString(hash);
 
-      ColorEcho.EchoLine("{0b}" + hashString + "{#}: " + Path.GetFileName(fileName));
+      ColorEcho.EchoLine("{0b}" + hashString + "{#}: " + this.GetFileNameLabel(fileName));
 
       if (!this.IsMd5File(fileName))
       {

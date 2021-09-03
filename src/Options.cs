@@ -22,6 +22,8 @@ namespace Cyotek.Tools.SimpleMD5
     private readonly List<string> _files;
     private readonly List<string> _errors;
 
+    private readonly bool _fullPaths;
+
     private readonly string _hashPath;
 
     private readonly bool _recursive;
@@ -40,6 +42,7 @@ namespace Cyotek.Tools.SimpleMD5
 
       _files = new List<string>();
       _errors = new List<string>();
+
       pathSwitchActive = false;
 
       for (int i = 0; i < args.Length; i++)
@@ -60,6 +63,10 @@ namespace Cyotek.Tools.SimpleMD5
             {
               pathSwitchActive = true;
               _verifyHash = true;
+            }
+            else if (string.Equals(name, "f", StringComparison.OrdinalIgnoreCase))
+            {
+              _fullPaths = true;
             }
             else if (string.Equals(name, "w", StringComparison.OrdinalIgnoreCase))
             {
@@ -91,6 +98,8 @@ namespace Cyotek.Tools.SimpleMD5
 
     public ReadOnlyCollection<string> Files => _files.AsReadOnly();
     public ReadOnlyCollection<string> Errors => _errors.AsReadOnly();
+
+    public bool FullPaths => _fullPaths;
 
     public bool Generate => _writeHash;
 
