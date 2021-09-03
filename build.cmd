@@ -7,7 +7,7 @@ SET SCRIPTPATH=%SCRIPTPATH:~0,-1%
 
 CD %SCRIPTPATH%
 
-CALL ..\..\..\build\set35vars.bat
+CALL %CTKBLDROOT%setupEnv.cmd
 
 %msbuildexe% Md5.sln /p:Configuration=Release /verbosity:minimal /nologo /t:Clean,Build
 
