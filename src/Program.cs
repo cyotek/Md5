@@ -91,11 +91,11 @@ namespace Cyotek.Tools.SimpleMD5
       return path;
     }
 
-    private string GetFileNameLabel(string fileName)
+    private string GetFileNameLabel(string basePath, string fileName)
     {
       return _options.FullPaths
         ? fileName
-        : Path.GetFileName(fileName);
+        : this.TruncatePath(basePath, fileName);
     }
 
     private byte[] GetHash(HashAlgorithm algorithm, string fileName)
@@ -160,7 +160,7 @@ namespace Cyotek.Tools.SimpleMD5
       return string.Equals(".md5", Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase);
     }
 
-    private ExitCode ProcessDirectory(string directoryName)
+    private ExitCode ProcessDirectory(string basePath, string directoryName)
     {
       ExitCode exitCode;
       ExitCode checkCode;
@@ -171,7 +171,7 @@ namespace Cyotek.Tools.SimpleMD5
 
       for (int i = 0; i < fileNames.Length; i++)
       {
-        checkCode = this.ProcessFile(fileNames[i]);
+        checkCode = this.ProcessFile(basePath, fileNames[i]);
 
         if (checkCode > exitCode)
         {
@@ -187,7 +187,7 @@ namespace Cyotek.Tools.SimpleMD5
 
         for (int i = 0; i < directoryNames.Length; i++)
         {
-          checkCode = this.ProcessDirectory(directoryNames[i]);
+          checkCode = this.ProcessDirectory(basePath, directoryNames[i]);
 
           if (checkCode > exitCode)
           {
@@ -199,13 +199,13 @@ namespace Cyotek.Tools.SimpleMD5
       return exitCode;
     }
 
-    private ExitCode ProcessFile(string fileName)
+    private ExitCode ProcessFile(string basePath, string fileName)
     {
       ExitCode result;
 
       try
       {
-        result = this.ProcessFile(fileName, this.GetMd5Hash(fileName));
+        result = this.ProcessFile(basePath, fileName, this.GetMd5Hash(fileName));
       }
       catch (Exception ex)
       {
@@ -216,7 +216,7 @@ namespace Cyotek.Tools.SimpleMD5
       return result;
     }
 
-    private ExitCode ProcessFile(string fileName, byte[] hash)
+    private ExitCode ProcessFile(string basePath, string fileName, byte[] hash)
     {
       ExitCode exitCode;
       string hashString;
@@ -224,7 +224,7 @@ namespace Cyotek.Tools.SimpleMD5
       exitCode = ExitCode.Success;
       hashString = this.GetHashString(hash);
 
-      ColorEcho.EchoLine("{0b}" + hashString + "{#}: " + this.GetFileNameLabel(fileName));
+      ColorEcho.EchoLine("{0b}" + hashString + "{#}: " + this.GetFileNameLabel(basePath, fileName));
 
       if (!this.IsMd5File(fileName))
       {
@@ -235,7 +235,7 @@ namespace Cyotek.Tools.SimpleMD5
       return exitCode;
     }
 
-    private ExitCode ProcessFileNameArguments(string path)
+    private ExitCode ProcessFileNameArguments(string basePath)
     {
       ExitCode result;
 
@@ -243,32 +243,27 @@ namespace Cyotek.Tools.SimpleMD5
 
       foreach (string arg in _options.Files)
       {
-        foreach (string fileName in this.ExpandFileNames(path, arg))
+        foreach (string path in this.ExpandFileNames(basePath, arg))
         {
           ExitCode checkCode;
           bool isFolder;
           bool isFile;
 
-          isFile = File.Exists(fileName);
-          isFolder = Directory.Exists(fileName);
+          isFile = File.Exists(path);
+          isFolder = Directory.Exists(path);
 
           if (!isFolder && !isFile)
           {
-            ColorEcho.EchoLine("{0c}File not found:{#} " + fileName);
+            ColorEcho.EchoLine("{0c}File not found:{#} " + path);
             checkCode = ExitCode.Error;
           }
           else
           {
             try
             {
-              if (isFile)
-              {
-                checkCode = this.ProcessFile(fileName);
-              }
-              else
-              {
-                checkCode = this.ProcessDirectory(fileName);
-              }
+              checkCode = isFile
+                ? this.ProcessFile(basePath, path)
+                : this.ProcessDirectory(basePath, path);
             }
             catch (Exception ex)
             {
@@ -299,7 +294,7 @@ namespace Cyotek.Tools.SimpleMD5
       {
         exitCode = _options.Files.Count > 0
           ? this.ProcessFileNameArguments(_basePath)
-          : this.ProcessDirectory(_basePath);
+          : this.ProcessDirectory(_basePath, _basePath);
       }
       else
       {
@@ -319,6 +314,13 @@ namespace Cyotek.Tools.SimpleMD5
     private bool ShouldWriteFileHash(string fileName, string hash)
     {
       return _options.Generate && (!File.Exists(fileName) || !string.Equals(hash, File.ReadAllText(fileName)));
+    }
+
+    private string TruncatePath(string basePath, string fileName)
+    {
+      return fileName.StartsWith(basePath, StringComparison.InvariantCultureIgnoreCase)
+        ? fileName.Substring(basePath.Length)
+        : Path.GetFileName(fileName);
     }
 
     private void UpdateHash(string fileName, string hash)

@@ -63,13 +63,13 @@ directory will be scanned.
 
 ```text
 845532e9859d841dc4c2f121886d62c4: setup-cyowcopy-1.9.0.0-x64-alpha.exe
-5170fc8e5a71d5e6db2bba132255c75e: ctkaupld.exe
-8b0a35dcbf9dd4928b042a27fd3bfcef: cyowcopy.exe
-a2903cb6bdcd2a6e1da9e116b1c24f30: remfdbck.exe
-64b729790db0f44174a4d1aea095de6e: setmgr.exe
-95f219aa871719dc4a8a78a9e85ea5d2: tdiagvwr.exe
-c1acb440ee6507b581ea3a0ff8119e26: updchk.exe
-a3b255d9e09962ae39829b3da1169ef1: wcopy.exe
+5170fc8e5a71d5e6db2bba132255c75e: x64\ctkaupld.exe
+8b0a35dcbf9dd4928b042a27fd3bfcef: x64\cyowcopy.exe
+a2903cb6bdcd2a6e1da9e116b1c24f30: x64\remfdbck.exe
+64b729790db0f44174a4d1aea095de6e: x64\setmgr.exe
+95f219aa871719dc4a8a78a9e85ea5d2: x64\tdiagvwr.exe
+c1acb440ee6507b581ea3a0ff8119e26: x64\updchk.exe
+a3b255d9e09962ae39829b3da1169ef1: x64\wcopy.exe
 ```
 
 ### Displaying full paths of file names
