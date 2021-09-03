@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace Cyotek.Tools.SimpleMD5
 {
@@ -82,7 +83,7 @@ namespace Cyotek.Tools.SimpleMD5
           {
             pathSwitchActive = false;
 
-            _hashPath = arg;
+            _hashPath = Path.Combine(Environment.CurrentDirectory, arg);
           }
           else
           {
