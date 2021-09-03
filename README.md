@@ -1,7 +1,7 @@
-Simple MD5
-===========
+# Simple MD5
 
-Ultra simple MD5 command line utility.
+Windows command line utility for viewing, generating and
+verifying MD5 hashes of files.
 
 Usage:
 
@@ -21,8 +21,7 @@ directory will be scanned.
 > Note: File names ending with .md5 are always ignored for write
 > or verify operations
 
-Options
--------
+## Options
 
 | Switch      | Description                                                                                                                                                         |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -31,8 +30,7 @@ Options
 | `/v <path>` | Verify hashes. If `path` is specified, hash will be read from specified location. Cannot be used with `/w`                                                          |
 | `/f`        | Show full paths                                                                                                                                                     |
 
-Exit Codes
-----------
+## Exit Codes
 
 | Code | Description   |
 | ---- | ------------- |
@@ -40,25 +38,108 @@ Exit Codes
 | `1`  | Failed        |
 | `2`  | Verify Failed |
 
-Examples
---------
+## Examples
 
-![Displaying the hash of all .exe files in the current
-directory][screenshot1]
+### Displaying hashes for all files in the current directory
 
-Displaying the hash of all `.exe` files in the current directory
+> $ md5
 
-![Displaying the hash of all .exe files in the current directory
-and child folders][screenshot2]
+```text
+6b24faec50a945f7d0fc36a8c041b781: cyowcopy--x64.zip
+845532e9859d841dc4c2f121886d62c4: setup-cyowcopy-1.9.0.0-x64-alpha.exe
+```
 
-Displaying the hash of all `.exe` files in the current directory
-and child folders
+### Displaying hashes for all exe files in the current directory
 
-![Verifying hashes against previous saved values][screenshot3]
+> $ md5 *.exe
 
-Verifying hashes against previous saved values
+```text
+845532e9859d841dc4c2f121886d62c4: setup-cyowcopy-1.9.0.0-x64-alpha.exe
+```
 
-[screenshot1]: res/screenshot1.png
-[screenshot2]: res/screenshot2.png
-[screenshot3]: res/screenshot3.png
+### Displaying hashes for all exe files in the current directory recursively
 
+> $ md5 *.exe /r
+
+```text
+845532e9859d841dc4c2f121886d62c4: setup-cyowcopy-1.9.0.0-x64-alpha.exe
+5170fc8e5a71d5e6db2bba132255c75e: ctkaupld.exe
+8b0a35dcbf9dd4928b042a27fd3bfcef: cyowcopy.exe
+a2903cb6bdcd2a6e1da9e116b1c24f30: remfdbck.exe
+64b729790db0f44174a4d1aea095de6e: setmgr.exe
+95f219aa871719dc4a8a78a9e85ea5d2: tdiagvwr.exe
+c1acb440ee6507b581ea3a0ff8119e26: updchk.exe
+a3b255d9e09962ae39829b3da1169ef1: wcopy.exe
+```
+
+### Displaying full paths of file names
+
+> $ md5 /f
+
+```text
+6b24faec50a945f7d0fc36a8c041b781: D:\Checkout\trunk\cyotek\source\Applications\WebCopy\deployment\cyowcopy--x64.zip
+845532e9859d841dc4c2f121886d62c4: D:\Checkout\trunk\cyotek\source\Applications\WebCopy\deployment\setup-cyowcopy-1.9.0.0-x64-alpha.exe
+```
+
+### Saving hashes alongside source files
+
+> $ md5 /w
+
+```text
+6b24faec50a945f7d0fc36a8c041b781: cyowcopy--x64.zip
+845532e9859d841dc4c2f121886d62c4: setup-cyowcopy-1.9.0.0-x64-alpha.exe
+```
+
+> $ dir /b
+
+```text
+cyowcopy--x64.zip
+cyowcopy--x64.zip.md5
+setup-cyowcopy-1.9.0.0-x64-alpha.exe
+setup-cyowcopy-1.9.0.0-x64-alpha.exe.md5
+```
+
+### Saving hashes to a secondary folder tree
+
+> $ md5 /w ..\hashset
+
+```text
+6b24faec50a945f7d0fc36a8c041b781: cyowcopy--x64.zip
+845532e9859d841dc4c2f121886d62c4: setup-cyowcopy-1.9.0.0-x64-alpha.exe
+```
+
+> $ dir /b
+
+```text
+cyowcopy--x64.zip
+setup-cyowcopy-1.9.0.0-x64-alpha.exe
+```
+
+> $ dir ..\hashset /b
+
+```text
+cyowcopy--x64.zip.md5
+setup-cyowcopy-1.9.0.0-x64-alpha.exe.md5
+```
+
+### Verifying saved hashes
+
+> $ md5 /v
+
+```text
+6b24faec50a945f7d0fc36a8c041b781: cyowcopy--x64.zip
+VERIFIED
+845532e9859d841dc4c2f121886d62c4: setup-cyowcopy-1.9.0.0-x64-alpha.exe
+VERIFIED
+```
+
+### Verifying saved hashes in a secondary folder tree
+
+> $ md5 /v ..\hashset
+
+```text
+6b24faec50a945f7d0fc36a8c041b781: cyowcopy--x64.zip
+VERIFIED
+845532e9859d841dc4c2f121886d62c4: setup-cyowcopy-1.9.0.0-x64-alpha.exe
+VERIFIED
+```
