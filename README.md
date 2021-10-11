@@ -30,6 +30,7 @@ directory will be scanned.
 | `/v <path>` | Verify hashes. If `path` is specified, hash will be read from specified location. Cannot be used with `/w`                                                          |
 | `/f`        | Show full paths                                                                                                                                                     |
 | `/e`        | Show errors only (only applicable with `/v`)                                                                                                                        |
+| `/n`        | Write hash information for new files only (only applicable with `/w`)                                                                                               |
 
 ## Exit Codes
 

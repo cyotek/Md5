@@ -270,7 +270,7 @@ namespace Cyotek.Tools.SimpleMD5
 
     private bool ShouldWriteFileHash(string fileName, string hash)
     {
-      return _options.Generate && (!File.Exists(fileName) || !string.Equals(hash, File.ReadAllText(fileName)));
+      return _options.Generate && (!File.Exists(fileName) || (!_options.NewFilesOnly && !string.Equals(hash, File.ReadAllText(fileName))));
     }
 
     private string TruncatePath(string basePath, string fileName)
@@ -288,9 +288,7 @@ namespace Cyotek.Tools.SimpleMD5
 
       if (this.ShouldWriteFileHash(md5FileName, hash))
       {
-        Directory.CreateDirectory(Path.GetDirectoryName(md5FileName));
-
-        File.WriteAllText(md5FileName, hash, Encoding.ASCII);
+        this.WriteFile(md5FileName, hash);
       }
     }
 
@@ -353,6 +351,17 @@ namespace Cyotek.Tools.SimpleMD5
       }
 
       return result;
+    }
+
+    private void WriteFile(string fileName, string content)
+    {
+#if DEBUG
+      Debug.WriteLine(string.Format("Writing '{0}'...", fileName));
+#endif
+
+      Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+
+      File.WriteAllText(fileName, content, Encoding.ASCII);
     }
 
     #endregion Private Methods
