@@ -30,6 +30,8 @@ namespace Cyotek.Tools.SimpleMD5
 
     private readonly string _hashPath;
 
+    private readonly bool _newFilesOnly;
+
     private readonly bool _recursive;
 
     private readonly bool _verifyHash;
@@ -81,6 +83,10 @@ namespace Cyotek.Tools.SimpleMD5
               pathSwitchActive = true;
               _writeHash = true;
             }
+            else if (string.Equals(name, "n", StringComparison.OrdinalIgnoreCase))
+            {
+              _newFilesOnly = true;
+            }
             else
             {
               _errors.Add(string.Format("Switch '{0}' not recognised.", name));
@@ -115,6 +121,8 @@ namespace Cyotek.Tools.SimpleMD5
     public bool Generate => _writeHash;
 
     public string HashPath => _hashPath;
+
+    public bool NewFilesOnly => _newFilesOnly;
 
     public bool Recursive => _recursive;
 
