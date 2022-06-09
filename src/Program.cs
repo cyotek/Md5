@@ -1,7 +1,7 @@
 ﻿// Cyotek MD5 Utility
 // https://github.com/cyotek/Md5
 
-// Copyright (c) 2015-2021 Cyotek Ltd.
+// Copyright (c) 2015-2022 Cyotek Ltd.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -159,7 +159,14 @@ namespace Cyotek.Tools.SimpleMD5
 
       try
       {
-        result = this.ProcessFile(basePath, fileName, HashUtilities.GetMd5Hash(fileName));
+        if (!_options.NewFilesOnly || (!this.IsMd5File(fileName) && !File.Exists(this.GetMd5FileName(fileName))))
+        {
+          result = this.ProcessFile(basePath, fileName, HashUtilities.GetMd5Hash(fileName));
+        }
+        else
+        {
+          result = ExitCode.Success;
+        }
       }
       catch (Exception ex)
       {
