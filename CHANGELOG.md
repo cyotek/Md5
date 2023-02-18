@@ -2,6 +2,12 @@
 
 ## Change Log
 
+### 1.4
+
+#### Added
+
+* Added `/x` option to allow files or directories to be skipped
+
 ### 1.3.1
 
 #### Added

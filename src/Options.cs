@@ -1,7 +1,7 @@
 ﻿// Cyotek MD5 Utility
 // https://github.com/cyotek/Md5
 
-// Copyright (c) 2021 Cyotek Ltd.
+// Copyright (c) 2021-2023 Cyotek Ltd.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -24,6 +24,8 @@ namespace Cyotek.Tools.SimpleMD5
 
     private readonly bool _errorsOnly;
 
+    private readonly List<string> _exclusions;
+
     private readonly List<string> _files;
 
     private readonly bool _fullPaths;
@@ -45,11 +47,14 @@ namespace Cyotek.Tools.SimpleMD5
     public Options(string[] args)
     {
       bool pathSwitchActive;
+      bool valueSwitchActive;
 
       _files = new List<string>();
       _errors = new List<string>();
+      _exclusions = new List<string>();
 
       pathSwitchActive = false;
+      valueSwitchActive = false;
 
       for (int i = 0; i < args.Length; i++)
       {
@@ -59,7 +64,19 @@ namespace Cyotek.Tools.SimpleMD5
 
         if (!string.IsNullOrEmpty(arg))
         {
-          if (Options.IsSwitch(arg, out string name))
+          if (pathSwitchActive)
+          {
+            pathSwitchActive = false;
+
+            _hashPath = Path.Combine(Environment.CurrentDirectory, arg);
+          }
+          else if (valueSwitchActive)
+          {
+            valueSwitchActive = false;
+
+            _exclusions.Add(arg);
+          }
+          else if (Options.IsSwitch(arg, out string name))
           {
             if (string.Equals(name, "r", StringComparison.OrdinalIgnoreCase))
             {
@@ -87,16 +104,14 @@ namespace Cyotek.Tools.SimpleMD5
             {
               _newFilesOnly = true;
             }
+            else if (string.Equals(name, "x", StringComparison.OrdinalIgnoreCase))
+            {
+              valueSwitchActive = true;
+            }
             else
             {
               _errors.Add(string.Format("Switch '{0}' not recognised.", name));
             }
-          }
-          else if (pathSwitchActive)
-          {
-            pathSwitchActive = false;
-
-            _hashPath = Path.Combine(Environment.CurrentDirectory, arg);
           }
           else
           {
@@ -113,6 +128,8 @@ namespace Cyotek.Tools.SimpleMD5
     public ReadOnlyCollection<string> Errors => _errors.AsReadOnly();
 
     public bool ErrorsOnly => _errorsOnly;
+
+    public ReadOnlyCollection<string> Exclusions => _exclusions.AsReadOnly();
 
     public ReadOnlyCollection<string> Files => _files.AsReadOnly();
 
