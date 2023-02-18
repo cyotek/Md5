@@ -7,9 +7,9 @@ SET SCRIPTPATH=%SCRIPTPATH:~0,-1%
 
 CD %SCRIPTPATH%
 
-CALL %CTKBLDROOT%setupEnv.cmd
+CALL %CTKBLDROOT%\setupEnv.cmd
 
-SET BASENAME=Md5
+SET BASENAME=Cyotek.Md5
 SET RELDIR=src\bin\Release\
 SET DLLNAME=%BASENAME%.dll
 
@@ -19,7 +19,7 @@ IF EXIST %RELDIR%*.*  DEL /F /Q %RELDIR%*.*
 
 PUSHD %RELDIR%
 
-CALL signcmd .\%BASENAME%.exe
+CALL signcmd .\md5.exe
 
 %zipexe% a %BASENAME%.1.x.x.zip -r
 

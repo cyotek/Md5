@@ -1,7 +1,7 @@
 ﻿// Cyotek MD5 Utility
 // https://github.com/cyotek/Md5
 
-// Copyright (c) 2015-2022 Cyotek Ltd.
+// Copyright (c) 2015-2023 Cyotek Ltd.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -44,7 +44,7 @@ namespace Cyotek.Tools.SimpleMD5
         pending = new Queue<string>();
         pending.Enqueue(path);
 
-        matcher = new WildcardPatternMatcher();
+        matcher = WildcardPatternMatcher.Default;
 
         do
         {
@@ -117,37 +117,46 @@ namespace Cyotek.Tools.SimpleMD5
     private ExitCode ProcessDirectory(string basePath, string directoryName)
     {
       ExitCode exitCode;
-      ExitCode checkCode;
-      string[] fileNames;
 
       exitCode = ExitCode.Success;
-      fileNames = Directory.GetFiles(directoryName);
 
-      for (int i = 0; i < fileNames.Length; i++)
+      if (this.ShouldInclude(directoryName, true))
       {
-        checkCode = this.ProcessFile(basePath, fileNames[i]);
+        string[] fileNames;
+        ExitCode checkCode;
 
-        if (checkCode > exitCode)
+        fileNames = Directory.GetFiles(directoryName);
+
+        for (int i = 0; i < fileNames.Length; i++)
         {
-          exitCode = checkCode;
-        }
-      }
-
-      if (_options.Recursive)
-      {
-        string[] directoryNames;
-
-        directoryNames = Directory.GetDirectories(directoryName);
-
-        for (int i = 0; i < directoryNames.Length; i++)
-        {
-          checkCode = this.ProcessDirectory(basePath, directoryNames[i]);
+          checkCode = this.ProcessFile(basePath, fileNames[i]);
 
           if (checkCode > exitCode)
           {
             exitCode = checkCode;
           }
         }
+
+        if (_options.Recursive)
+        {
+          string[] directoryNames;
+
+          directoryNames = Directory.GetDirectories(directoryName);
+
+          for (int i = 0; i < directoryNames.Length; i++)
+          {
+            checkCode = this.ProcessDirectory(basePath, directoryNames[i]);
+
+            if (checkCode > exitCode)
+            {
+              exitCode = checkCode;
+            }
+          }
+        }
+      }
+      else if (!_options.ErrorsOnly)
+      {
+        ColorEcho.EchoLine("{0e}SKIPPED:{#} " + this.GetFileNameLabel(basePath, directoryName));
       }
 
       return exitCode;
@@ -159,13 +168,18 @@ namespace Cyotek.Tools.SimpleMD5
 
       try
       {
-        if (!_options.NewFilesOnly || (!this.IsMd5File(fileName) && !File.Exists(this.GetMd5FileName(fileName))))
+        result = ExitCode.Success;
+
+        if (this.ShouldInclude(fileName, false))
         {
-          result = this.ProcessFile(basePath, fileName, HashUtilities.GetMd5Hash(fileName));
+          if (!_options.NewFilesOnly || (!this.IsMd5File(fileName) && !File.Exists(this.GetMd5FileName(fileName))))
+          {
+            result = this.ProcessFile(basePath, fileName, HashUtilities.GetMd5Hash(fileName));
+          }
         }
-        else
+        else if (!_options.ErrorsOnly)
         {
-          result = ExitCode.Success;
+          ColorEcho.EchoLine("{0e}SKIPPED:{#} " + this.GetFileNameLabel(basePath, fileName));
         }
       }
       catch (Exception ex)
@@ -273,6 +287,47 @@ namespace Cyotek.Tools.SimpleMD5
       }
 
       return (int)exitCode;
+    }
+
+    private bool ShouldInclude(string path, bool treatAsPath)
+    {
+      WildcardPatternMatcher matcher;
+      bool result;
+
+      path = path.Replace(Path.DirectorySeparatorChar, '/');
+
+      if (treatAsPath && path[path.Length - 1] != '/')
+      {
+        path += '/';
+      }
+
+      matcher = WildcardPatternMatcher.Default;
+
+      result = true;
+
+      foreach (string raw in _options.Exclusions)
+      {
+        string pattern;
+
+        if (raw[0] != '*')
+        {
+          pattern = raw[0] == '/'
+            ? "*" + raw
+            : "*/" + raw;
+        }
+        else
+        {
+          pattern = raw;
+        }
+
+        if (matcher.IsMatch(path, pattern, true))
+        {
+          result = false;
+          break;
+        }
+      }
+
+      return result;
     }
 
     private bool ShouldWriteFileHash(string fileName, string hash)

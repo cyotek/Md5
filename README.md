@@ -6,7 +6,7 @@ verifying MD5 hashes of files.
 Usage:
 
 `md5.exe [file1[+file2][+file3]...] [/r] [[/w [path]] | [/v
-[path]]] [/f]`
+[path]]] [/f] [[/x pattern]...]`
 
 File name arguments may point to either a file or a directory.
 When pointing to a directory, all files in the directory will be
@@ -23,14 +23,15 @@ directory will be scanned.
 
 ## Options
 
-| Switch      | Description                                                                                                                                                         |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/r`        | Scan directories recursively                                                                                                                                        |
-| `/w <path>` | Write the hash into `<filename>.md5`. If `path` is specified, file will be written to specified location instead of alongside source file. Cannot be used with `/v` |
-| `/v <path>` | Verify hashes. If `path` is specified, hash will be read from specified location. Cannot be used with `/w`                                                          |
-| `/f`        | Show full paths                                                                                                                                                     |
-| `/e`        | Show errors only (only applicable with `/v`)                                                                                                                        |
-| `/n`        | Write hash information for new files only (only applicable with `/w`)                                                                                               |
+| Switch         | Description                                                                                                                                                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/r`           | Scan directories recursively                                                                                                                                        |
+| `/w <path>`    | Write the hash into `<filename>.md5`. If `path` is specified, file will be written to specified location instead of alongside source file. Cannot be used with `/v` |
+| `/v <path>`    | Verify hashes. If `path` is specified, hash will be read from specified location. Cannot be used with `/w`                                                          |
+| `/f`           | Show full paths                                                                                                                                                     |
+| `/e`           | Show errors only (only applicable with `/v`)                                                                                                                        |
+| `/n`           | Write hash information for new files only (only applicable with `/w`)                                                                                               |
+| `/x <pattern>` | Excludes files or directories based on a pattern. May be specified multiple times. Directory separators must be Unix style, e.g. `/`. |
 
 ## Exit Codes
 
@@ -144,4 +145,23 @@ VERIFIED
 VERIFIED
 845532e9859d841dc4c2f121886d62c4: setup-cyowcopy-1.9.0.0-x64-alpha.exe
 VERIFIED
+```
+
+### Excluding files
+
+> $ md5 /x *.exe
+
+```text
+6b24faec50a945f7d0fc36a8c041b781: cyowcopy--x64.zip
+SKIPPED: setup-cyowcopy-1.9.0.0-x64-alpha.exe
+```
+
+### Excluding directories
+
+> $ md5 /r /x "x64/"
+
+```text
+6b24faec50a945f7d0fc36a8c041b781: cyowcopy--x64.zip
+845532e9859d841dc4c2f121886d62c4: setup-cyowcopy-1.9.0.0-x64-alpha.exe
+SKIPPED: x64
 ```
